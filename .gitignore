@@ -2,4 +2,4 @@ node_modules/
 .env
 uploads/*
 !uploads/.gitkeep
-drizzle/
+# Keep drizzle/ tracked — SQL migrations + meta/_journal.json are required for `npm run db:migrate` on Render.
