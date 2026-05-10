@@ -4,6 +4,8 @@
 # Postgres: uses Neon (or any external URL in DATABASE_URL). No Render Postgres in this blueprint.
 #
 # Render loads render.yaml from the Git repo root, or set Web Service Root Directory = `backend`.
+#
+# Free-tier web services cannot use `preDeployCommand`. Migrations run at container start instead.
 
 version: '1'
 
@@ -14,8 +16,7 @@ services:
     region: virginia
     plan: free
     buildCommand: npm ci
-    preDeployCommand: npm run db:migrate
-    startCommand: npm start
+    startCommand: npm run db:migrate && npm start
     envVars:
       - key: NODE_VERSION
         value: '20.18.0'
