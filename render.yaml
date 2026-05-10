@@ -1,0 +1,38 @@
+# Render Blueprint — aligns with backend `.env` / `src/env.js`.
+# Secrets (`DATABASE_URL`, `JWT_SECRET`, `CORS_ORIGIN`): set in the Render Dashboard on first sync (`sync: false`).
+#
+# Postgres: uses Neon (or any external URL in DATABASE_URL). No Render Postgres in this blueprint.
+#
+# Render loads render.yaml from the Git repo root, or set Web Service Root Directory = `backend`.
+
+version: '1'
+
+services:
+  - type: web
+    name: collaborative-trip-planning-api
+    runtime: node
+    region: virginia
+    plan: free
+    buildCommand: npm ci
+    preDeployCommand: npm run db:migrate
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: '20.18.0'
+      # Neon (same role as DATABASE_URL in .env); paste full URL in Dashboard — never commit credentials here.
+      - key: DATABASE_URL
+        sync: false
+      # Same rule as local .env — min 16 chars (see env.js).
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRES_IN
+        value: '7d'
+      # Matches local default; change in Dashboard if cookies must align with a deployed frontend domain.
+      - key: COOKIE_DOMAIN
+        value: localhost
+      - key: UPLOAD_DIR
+        value: ./uploads
+      # Production frontend URL (local dev uses http://localhost:5173).
+      - key: CORS_ORIGIN
+        sync: false
+      # Render sets PORT; omitting lets env.js use Render’s injected PORT.
